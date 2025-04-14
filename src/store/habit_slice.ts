@@ -36,8 +36,24 @@ const habitslice = createSlice({
 
             state.HabitList.push(newhabit);
         },
+
+        removeHabit: (
+            state,
+            action: PayloadAction<{ id: string }>
+        ) => {
+
+            state.HabitList = state.HabitList.filter((item) => item.id !== action.payload.id)
+
+        },
+
+        // toggleCompletion: (state,
+        //     action: PayloadAction<{ id: string }>
+        // ) => {
+        //     const date = new Date;
+        //     // state.HabitList.find((item) => item.id == action.payload.id)?.completedDates
+        // }
     }
 })
 
-export const { addHabit } = habitslice.actions
+export const { addHabit, removeHabit } = habitslice.actions
 export default habitslice.reducer;
