@@ -10,16 +10,31 @@ import {
     Paper,
     Grid,
 } from "@mui/material";
-import { removeHabit } from '../store/habit_slice';
+import { Habit, removeHabit, toggleCompletion } from '../store/habit_slice';
 
 const ListHabit: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>()
-    const date = new Date;
-    const today = date.getDay();
+    const today = new Date().toISOString().split("T")[0];;
     const habits = useSelector((state: RootState) => state.habitList.HabitList);
+
+    const getStreak = (completedDates: string[]) => {
+        let streak = 0;
+        const currdate = new Date()
+
+        for (let i = 0; i < completedDates.length; i++) {
+            if (completedDates.includes(currdate.toISOString().split("T")[0])) {
+                streak++;
+                currdate.setDate(currdate.getDate() - 1);
+            } else {
+                break;
+            }
+        }
+        return streak;
+    }
+
     return (
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 4 }}>
-            {habits.map((habit: any) => (
+            {habits.map((habit: Habit) => (
                 <Paper key={habit.id} elevation={2} sx={{ p: 2 }}>
                     <Grid container alignItems="center">
                         <Grid size={{ xs: 6, md: 8 }}>
@@ -36,9 +51,9 @@ const ListHabit: React.FC = () => {
                                     color={
                                         habit.completedDates.includes(today) ? "success" : "primary"
                                     }
-                                    // onClick={() =>
-                                    //     dispatch(toggleHabit({ id: habit.id, date: today }))
-                                    // }
+                                    onClick={() =>
+                                        dispatch(toggleCompletion({ id: habit.id }))
+                                    }
                                     startIcon={<CheckCircleIcon />}
                                 >
                                     {habit.completedDates.includes(today)
@@ -58,13 +73,12 @@ const ListHabit: React.FC = () => {
                     </Grid>
                     <Box sx={{ mt: 2 }}>
                         <Typography variant="body2">
-                            {/* Current Streak: {getStreak(habit)} days */}
+                            Current Streak: {getStreak(habit.completedDates)} days
                             Current Streak: days
                         </Typography>
                         <LinearProgress
                             variant="determinate"
-                            // value={(getStreak(habit) / 30) * 100}
-                            value={40}
+                            value={(getStreak(habit.completedDates) / 30) * 100}
                             sx={{ mt: 1 }}
                         />
                     </Box>

@@ -46,14 +46,23 @@ const habitslice = createSlice({
 
         },
 
-        // toggleCompletion: (state,
-        //     action: PayloadAction<{ id: string }>
-        // ) => {
-        //     const date = new Date;
-        //     // state.HabitList.find((item) => item.id == action.payload.id)?.completedDates
-        // }
+        toggleCompletion: (state,
+            action: PayloadAction<{ id: string }>
+        ) => {
+            const date = new Date().toISOString().split("T")[0];
+            const habit = state.HabitList.find((item) => item.id == action.payload.id);
+            if (habit) {
+                const index = habit.completedDates.indexOf(date);
+                if (index > -1) {
+                    habit.completedDates.splice(index, 1);
+                } else {
+
+                    habit.completedDates.push(date);
+                }
+            }
+        }
     }
 })
 
-export const { addHabit, removeHabit } = habitslice.actions
+export const { addHabit, removeHabit, toggleCompletion } = habitslice.actions
 export default habitslice.reducer;
